@@ -1,0 +1,10 @@
+Deleted1: D:\build\mt\BASE\deleted-theirs-conflict.txt 
+Deleted2: D:\build\mt\YOURS\deleted-theirs-conflict.txt 
+Deleted3: D:\build\mt\THEIRS\deleted-theirs-conflict.txt 
+Deleted1: D:\build\mt\BASE\deleted-yours-conflict.txt 
+Deleted2: D:\build\mt\THEIRS\deleted-yours-conflict.txt 
+Deleted3: D:\build\mt\YOURS\deleted-yours-conflict.txt 
+Added1: D:\build\mt\THEIRS\added-both-conflict.txt 
+Added2: D:\build\mt\YOURS\added-both-conflict.txt 
+Merge: D:\build\mt\OUTPUT\modified-conflict.txt 
+
