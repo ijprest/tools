@@ -1,0 +1,13 @@
+*.exe
+procexp.chm
+*.dll
+wtl/
+today.bat
+version.bat
+windbg.bat
+xml.config
+*.chm
+SpeedCrunch/
+Notepad2.*
+delstuff.bat
+Ruleset-*.txt
