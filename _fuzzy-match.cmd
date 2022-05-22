@@ -4,12 +4,18 @@ if "%dbgecho%"=="" set dbgecho=^^^> nul echo
 
 set DIRONLY=
 if /I "%~1"=="/d" SET DIRONLY=/D & shift /1
-if "%~2"=="" exit /b 1
+if "%~2"=="" if "%~3"=="" exit /b 1
 
 set SOURCESCRIPT=%~nx1
 set FUZZYPATH=%~2
 set COLLECTED=%~3
 %dbgecho% Performing fuzzy match on: %FUZZYPATH%
+if "%FUZZYPATH%"=="" (
+  if NOT "!COLLECTED!"=="" IF NOT "!COLLECTED:~-1!"=="\" SET COLLECTED=!COLLECTED!\
+  call :fuzzy "!COLLECTED!" "" "%DIRONLY%" || exit /b 1
+  endlocal & set FUZZY_MATCH=%COLLECTED%
+  exit /b 0
+)
 if "%FUZZYPATH:~0,1%"=="\" set "COLLECTED=\" & set FUZZYPATH=!FUZZYPATH:~1!
 if "%FUZZYPATH:~-1%"=="\" set DIRONLY=/D
 :pathloop
