@@ -15,7 +15,7 @@
 ::  In your script, use labelled callbacks to handle a switch/flag. (Note that
 ::  the parser converts forward slashes `/` to dashes '-'.).  E.g.:
 ::      :--foo
-::      :-f                                  <- would also handle `/f`
+::      :-f                                  &:: would also handle `/f`
 ::      echo The --foo switch was parsed
 ::      exit /b 0
 ::
@@ -34,12 +34,12 @@
 ::  ------------
 ::  1. Return `0` for success, or `1000` for a fatal error that should silently
 ::  abort (usually after you report the error yourself), e.g.:
-::      exit /b 0                            <- success!
-::      exit /b 1000                         <- fail; exit silently
+::      exit /b 0                            &:: success!
+::      exit /b 1000                         &:: fail; exit silently
 ::
 ::  A return value of `1` will result in an `unrecognized switch XXX` error.  So
 ::  don't return `1` unless you want that error message.
-::      exit /b 1                            <-- fail; `unrecognized switch`
+::      exit /b 1                            &:: fail; `unrecognized switch`
 ::
 ::  2. In your callbacks, %1 will be the name of the switch/flag or positional
 ::  argument parsed (as they appear on the command-line), while %2...%9 will
@@ -51,12 +51,12 @@
 ::      my_script.cmd --foo bar positional
 ::  And these labels:
 ::      :--foo
-::      echo %1 = %2                         <- `--foo = bar`
-::      set parse.consume=2                  <- to consume `bar`
+::      echo %1 = %2                         &:: `--foo = bar`
+::      set parse.consume=2                  &:: to consume `bar`
 ::      exit /b 0
 ::
 ::      :_pos1
-::      echo argument = %1                   <- `argument = positional`
+::      echo argument = %1                   &:: `argument = positional`
 ::      exit /b 0
 ::
 ::  3. Passing the standard `--` parameter will stop parsing.  Any remaining
@@ -66,7 +66,7 @@
 ::  handles labels).  If you need case-sensitivity, you can check the case of
 ::  `%1` in your callback. E.g., to disallow lowercase `-c`, something like:
 ::      :-C {path}
-::      if "%1"=="-c" exit /b 1              <- `error: unrecognized switch -c`
+::      if "%1"=="-c" exit /b 1              &:: `error: unrecognized switch -c`
 ::      :: your other logic
 ::      exit /b 0
 ::
@@ -75,7 +75,8 @@
 ::
 ::  5. The script automatically replaces `-?` and `/?` with `--help` to work
 ::  around some CMD.exe bugs.  So you only need a single `:--help` callback
-::  label. (And you can't distinguish at runtime.)
+::  label. (And you can't distinguish at runtime.)  Unfortunately, this also 
+::  applies to the `parse.remaining` arguments.
 ::
 ::  6. Something like `--foo=bar` would have the same result as `--foo bar`.
 ::  Your script can essentially ignore the equals sign.
@@ -94,8 +95,7 @@ set parse.consume=1
 set parse.param=%~2
 %dbgecho% Parsing argument: %~2
 if "%~2"=="-?" set parse.param=--help
-:: Handle `--` to stop parsing.
-if "%parse.param%"=="--" goto :collectparm
+if "%parse.param%"=="--" goto :collectparm &:: Handle `--` to stop parsing.
 :: Parse switches/flags by jumping to labels with the name of the switch (and
 :: exit if the switch returns an error).
 if "%parse.param:~0,2%"=="--" (
@@ -113,10 +113,8 @@ if "%parse.param:~0,2%"=="--" (
   if !ERRORLEVEL! EQU 1 echo [#{[91m%~n1: error: unrecognized positional argument `%parse.param%` 1>&2[m[#}
 )
 if ERRORLEVEL 1 exit /b 1
-:: Consume parameters (one by default, but a switch may specify more).
-for /L %%Q IN (1 1 %parse.consume%) DO shift /2
-:: Loop
-goto :parseparm
+for /L %%Q IN (1 1 %parse.consume%) DO shift /2 &:: Consume parameters
+goto :parseparm &:: Loop
 
 :: Collect remaining arguments
 :collectparm
