@@ -27,6 +27,8 @@ visualize the standard ANSI colors available.
 * `tcolor.cpp`: changes the Windows console colors; like the built-in `color`
 command, but only for new text.
 * `echoc.bat`: echos a line of text in the specified color (uses `tcolor.cpp`).
+* `pushcolor.cmd` and `popcolor.cmd` implement a text-color "stack", based on
+`tcolor.cpp`.
 
 ## Misc
 
