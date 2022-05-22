@@ -9,7 +9,7 @@ collected here for posterity.
 
 * `_parse-parameters.cmd` is a helper script to parse your batch-file's
 command-line. See [documentation](_parse-parameters.md).
-* `show-usage.cmd` is a helper script to print "usage" info for your batch
+* `_show-usage.cmd` is a helper script to print "usage" info for your batch
 files. See [documentation](_show-usage.md).
 
 ## Console-color stuff
