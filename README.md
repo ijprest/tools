@@ -14,8 +14,13 @@ files. See [documentation](_show-usage.md).
 
 ## Console-color stuff
 
-This stuff is mostly outdated; in Win10, prefer using ANSI escape sequences.
-Might still be useful if you regularly support older versions of Windows.
+This stuff is mostly outdated; in Win10, prefer using ANSI escape sequences
+(especially since Terminal now supports
+[XTPUSHSGR/XTPOPSGR](https://github.com/microsoft/terminal/issues/1796)).
+
+Might still be useful if you regularly support older versions of Windows. And
+even on modern Windows, running `tcolor /ansi /table` is a good way to
+visualize the standard ANSI colors available.
 
 * `tcolor.cpp`: changes the Windows console colors; like the built-in `color`
 command, but only for new text.
