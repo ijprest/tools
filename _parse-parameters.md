@@ -22,7 +22,7 @@ set parse.in=%* & set parse.in=!parse.in:/?=--help! & call _parse-parameters.cmd
 ## Handling arguments via callbacks
 
 In your script, use labelled callbacks to handle a switch/flag or positional
-argument. 
+argument.
 
 ### Switches / flags
 
@@ -117,7 +117,7 @@ if "%1"=="-c" exit /b 1        &:: `error: unrecognized switch -c`
 exit /b 0
 ```
 
-## Gotchas:
+## Gotchas
 
 The script automatically replaces `-?` and `/?` with `--help` to work around
 some CMD.exe bugs. So you only need a single `:--help` callback label. (And you
@@ -125,5 +125,6 @@ can't distinguish at runtime.) Unfortunately, this also applies to the
 `parse.remaining` arguments.
 
 ## See also
+
 Also check out `_show_usage.cmd` for an easy way to print help/usage text that
 integrates nicely with this script.
