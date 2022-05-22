@@ -1,5 +1,5 @@
 :: _parse-parameters.cmd -- a helper script to parse your batch-file's
-:: command-line.  See _parse-parameters.md for details.
+:: command-line.  See `_parse-parameters.md` for details.
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo
 %dbgecho% Parsing command-line: %*
 
