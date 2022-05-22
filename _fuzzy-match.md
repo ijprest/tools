@@ -1,6 +1,6 @@
 # `_fuzzy-match.cmd`
 
-`_fuzzy-match.cmd` is a helper script to perform a fuzzy file/path match.
+`_fuzzy-match.cmd` is a helper script to perform fuzzy file/path matching.
 
 It is intended to be called from other batch files or `doskey` aliases.
 

@@ -11,6 +11,8 @@ collected here for posterity.
 command-line. See [documentation](_parse-parameters.md).
 * `_show-usage.cmd` is a helper script to print "usage" info for your batch
 files. See [documentation](_show-usage.md).
+* `_fuzzy-match.cmd` is a helper script to perform fuzzy file/path matching.
+See [documentation](_fuzzy-match.md).
 
 ## Console-color stuff
 
@@ -28,6 +30,7 @@ command, but only for new text.
 
 ## Misc
 
+* `fcd.cmd` is a "fuzzy" replacement for `cd`/`pushd`. Uses `_fuzzy-match.cmd`.
 * `console-icon.cpp` is a small program to change the icon for the current
 console session.
   * Also included are a few colorized versions of the (Vista-era) console icons
