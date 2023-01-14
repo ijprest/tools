@@ -27,8 +27,8 @@ argument.
 ### Switches / flags
 
 For switches and flags, the name of the label is the same as the switch / flag.
-E.g., to define a switch named `--foo`, with a short `-f` alias, you would
-write the following:
+E.g., to define a switch named `--foo`, with a short single-character `-f`
+alias, you would write the following:
 
 ```cmd
 :--foo
@@ -38,8 +38,8 @@ exit /b 0
 ```
 
 Note that the parser converts forward slashes `/` to dashes '-' before calling
-your callback). So in the above example, `/f` on the command-line would have
-called the `-f` callback.
+your callback for single-character aliases. So in the above example, `/f` on the
+command-line would have called the `-f` callback.
 
 ### Positional arguments
 
@@ -57,7 +57,7 @@ set POSITIONAL_ARGUMENT_2=%1
 exit /b 0
 ```
 
-### Return values:
+### Return values
 
 Your callbacks should return `0` for success. If you return an error code of
 `1`, the parser will print a error message like `unrecognized switch --foo`. To
@@ -98,11 +98,45 @@ argument.
 Note that something like `--foo=bar` would have the same result as `--foo bar`.
 In both cases, the `--foo` callback is used, and `%2` will be `bar`.
 
+### Flag coalescing / shorthand
+
+The parser automatically supports coalescing single-character aliases.  E.g.,
+`-abc` (note the single dash) will call the callbacks for `-a`, `-b`, and `-c`.
+
+This is a convenient shorthand when specifying a lot of flags.  However, this
+obviously doesn't mix nicely with callbacks that extract parameters.
+
+If you expect to be able to parse parameters in any single-character flags,
+you should specify those characters in the `parse.paramflags` variable *before*
+you call the `_parse-parameters.cmd` script.  This will prevent those characters
+from coalescing.
+
+For example, to prevent `-x`, `-y`, and `-z` from coalescing, you could write:
+
+```cmd
+set parse.paramflags=xyz
+REM ... call _parse_parameters.cmd here ...
+```
+
+Given that `x` is in `parse.paramflags`, the following three examples on the
+command-line would all produce the same result:  `-x NN`, `-x=NN`, and `-xNN`.
+
 ### Stopping argument parsing
 
 This helper supports the standard `--` parameter to stop argument parsing. Any
 remaining arguments will be returned to the caller in the `parse.remaining`
 variable.
+
+If you want to stop parsing in response to another parameter, set `parse.stop=1` in your handler before returning.  E.g.:
+
+```cmd
+:--command exe-and-params
+set COMMAND=%parse.remaining%
+set parse.stop=1
+exit /b 0
+```
+
+For collecting parameters you intend to pass to a child program, using `parse.remaining` is preferable to collecting arguments yourself, since it preserves the formatting of the original command-line.
 
 ### Case (in-)sensitivity
 
@@ -125,6 +159,5 @@ can't distinguish at runtime.) Unfortunately, this also applies to the
 `parse.remaining` arguments.
 
 ## See also
-
-Also check out `_show_usage.cmd` for an easy way to print help/usage text that
+Also check out `_show-usage.cmd` for an easy way to print help/usage text that
 integrates nicely with this script.

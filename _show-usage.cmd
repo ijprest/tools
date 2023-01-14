@@ -1,5 +1,5 @@
-:: _show_usage.cmd -- Helper script to display automatic "usage" info for your
-:: batch files.  See `_show_usage.md` for details.
+:: _show-usage.cmd -- Helper script to display automatic "usage" info for your
+:: batch files.  See `_show-usage.md` for details.
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 if "%1"=="" exit /b 1
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo
@@ -28,17 +28,14 @@ set TYPE=0
 for /f "tokens=1,* delims=	" %%Q IN (%~1) DO (
   set Q=%%~Q
   if !TYPE! EQU 0 ( REM *** Not in a callback; check for labels that look right
+    set NAME=!Q:~1!
     if "!Q:~0,2!"==":-" ( REM *** switch
       set /a TYPE=1
-      set NAME=!Q:~1!
     ) else if "!Q:~0,5!"==":_pos" ( REM *** positional
       set /a TYPE=2
-      for /f "tokens=1,2 delims= " %%R IN ("!Q:~5!") DO (
-        if "%%S"=="" (set NAME={arg%%R}) else set NAME={%%S}
-        set /a N=!HAS.2!+1
-        %dbgecho% !N! LSS %%R
-        if !N! LSS %%R (echo [#{[91merror: positional `!Q!` out of sequence order[m[#} & exit /b 1)
-      )
+      set /a N=!HAS.2!+1
+      set NAME=!NAME:_pos=arg!
+      if !N! LSS !Q:~5! (echo [#{[91merror: positional `!Q!` out of sequence order[m[#} & exit /b 1)
     )
     if !TYPE! NEQ 0 for %%T IN (!TYPE!) DO (
       set /a HAS.%%T+=1
@@ -46,7 +43,9 @@ for /f "tokens=1,* delims=	" %%Q IN (%~1) DO (
       %dbgecho% Found !TYPENAME.%%T!: !NAME!
     )
   ) else for %%T IN (!TYPE!) DO ( REM *** We're in an existing callback
-    if "!Q!"==":" ( REM *** Help text; append
+    if "!Q!"=="::*" ( REM *** Positional name
+      if %%T EQU 1 (set CURRENT.%%T=!CURRENT.%%T! %%R) else set CURRENT.%%T=%%R
+    ) else if "!Q!"=="::" ( REM *** Help text; append
       if not "%%R"=="" (
         for %%Q IN (!HAS.%%T!) DO (
           %dbgecho% Appending help text for !TYPENAME.%%T! %%Q: %%R
