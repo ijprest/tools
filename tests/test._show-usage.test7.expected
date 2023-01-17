@@ -1,0 +1,6 @@
+[#{[97mUsage: test._show-usage.test7.txt [options][m[#}
+
+[6C--foo/-f  Help text for `--foo`
+[6C--bar/-b  Help text for `--bar`
+[9C--baz  Help text for `--baz`
+[9C--abc  Help text for `--abc`

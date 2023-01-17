@@ -1,0 +1,2 @@
+:--foo
+goto :EOF

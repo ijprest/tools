@@ -1,0 +1,13 @@
+:--foo
+:-f
+goto :EOF
+
+:--bar
+:-b
+goto :EOF
+
+:--baz
+goto :EOF
+
+:--abc
+goto :EOF

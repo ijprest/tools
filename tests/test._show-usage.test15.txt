@@ -1,0 +1,35 @@
+:_pos1
+::	Ampersand: $A
+goto :EOF
+
+:_pos2
+::	Pipe: $B
+goto :EOF
+
+:_pos3
+::	Left parenthesis: $C
+goto :EOF
+
+:_pos4
+::	Escape code (ASCII code 27): $E[#{$E[92mgreen$E[m$E[#}
+goto :EOF
+
+:_pos5
+::	Right parenthesis: $F
+goto :EOF
+
+:_pos6
+::	Greater-than sign: $G
+goto :EOF
+
+:_pos7
+::	Less-than sign: $L
+goto :EOF
+
+:_pos8
+::	Space; non-breaking: This$Sis$Sa$Slong$Sstring$Sthat$Sshouldn't$Sbreak$Sbecause$SI've$Sused$Sthe$Snon-breaking$Sspace.
+goto :EOF
+
+:_pos9
+::	Dollar sign: $$
+goto :EOF

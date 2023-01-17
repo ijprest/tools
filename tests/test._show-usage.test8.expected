@@ -1,0 +1,5 @@
+[#{[97mUsage: test._show-usage.test8.txt [--foo/-f][m[#}
+
+[6C--foo/-f  This is a long help string that describes the purpose of the
+[16C`--foo` / `-f` switch.  We've split it across multiple lines for
+[16Creadability.  It will be wrapped on output.

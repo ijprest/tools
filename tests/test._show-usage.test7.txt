@@ -1,0 +1,17 @@
+:--foo
+:-f
+::	Help text for `--foo`
+goto :EOF
+
+:--bar
+:-b
+::	Help text for `--bar`
+goto :EOF
+
+:--baz
+::	Help text for `--baz`
+goto :EOF
+
+:--abc
+::	Help text for `--abc`
+goto :EOF

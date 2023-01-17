@@ -1,0 +1,6 @@
+:--foo
+:-f
+::	This is a long help string that describes the purpose of the `--foo` / `-f`
+::	switch.  We've split it across multiple lines for readability.  It will be
+::	wrapped on output.
+goto :EOF

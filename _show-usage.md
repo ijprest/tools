@@ -1,6 +1,6 @@
-# `_show_usage.cmd`
+# `_show-usage.cmd`
 
-`_show_usage.cmd` is a helper script to print "help" / "usage" information for
+`_show-usage.cmd` is a helper script to print "help" / "usage" information for
 your batch files.
 
 It is intended for use alongside the `_parse_parameters.cmd` script. When used
@@ -42,7 +42,7 @@ To specify a simple help string for your switch / flag:
 ```cmd
 :--foo
 :-f
-:➡️Help text for --foo and -f.
+::➡️Help text for --foo and -f.
 REM *** Handler for --foo / -f ***
 exit /b 0
 ```
@@ -55,10 +55,10 @@ two labels by at least one line. The recommended way to do this is using a
 
 ```cmd
 :--foo
-:➡️Help text for `--foo`.
+::➡️Help text for `--foo`.
 goto :-f
 :-f
-:➡️This has the same handler as `--foo`, but different help text.
+::➡️This has the same handler as `--foo`, but different help text.
 REM *** Handler for --foo / -f ***
 exit /b 0
 ```
@@ -68,8 +68,8 @@ If your help text is particularly long, you can break it across multiple lines:
 ```cmd
 :--foo
 :-f
-:➡️This is a long help string that describes the purpose of the `--foo` / `-f`
-:➡️switch.  We've split it across multiple lines for readability.
+::➡️This is a long help string that describes the purpose of the `--foo` / `-f`
+::➡️switch.  We've split it across multiple lines for readability.
 REM *** Handler for --foo / -f ***
 exit /b 0
 ```
@@ -78,16 +78,15 @@ When output, the text will be wrapped to the console width, so feel free to be
 as verbose as you like. (Line breaking is only done at spaces. Sorry,
 non-Western-language speakers.)
 
-If your switch consumes additional arguments, you can describe this by adding a
-name to the switch label itself (separated from the name by a single space). If
-multiple switches are grouped, only add the argument name to the *last* one.
+If your switch consumes additional arguments, you can describe this on the line
+following the label by starting the line with `::*➡️`.
 
 ```cmd
 :--foo
-:-f arg-name
-:➡️This is the help text for `--foo`.  It consumes one additional argument.
-:➡️Note that `arg-name` was specified only on the *last* switch in the group.
-:➡️This group will be output something like `[--foo/-f arg-name]`.
+:-f
+::*➡️arg-name
+::➡️This is the help text for `--foo`.  It consumes one additional argument
+::➡️named 'arg-name'.
 REM *** Handler that consumes an extra argument ***
 set parse.consume=2
 exit /b 0
@@ -96,14 +95,14 @@ exit /b 0
 ### Positional arguments
 
 Help text for positional arguments is specified the same way as with switches /
-flags. The only difference is that positional arguments are always named. This
-is done similarly to a switch that consumes additional arguments&mdash;by
-specifying the argument name next to the callback label, separated by a single
-space. E.g.:
+flags. The only difference is that positional arguments should always be named.
+(Failure to name the argument will result in an undescriptive/generic default.)
+This is done similarly to a switch that consumes additional arguments. E.g.:
 
 ```cmd
-:_pos1 pos-arg-name
-:➡️This positional argument is named `pos-arg-name`.
+:_pos1
+::*➡️pos-arg-name
+::➡️This positional argument is named `pos-arg-name`.
 REM *** Handler for `pos-arg-name` ***
 exit /b 0
 ```

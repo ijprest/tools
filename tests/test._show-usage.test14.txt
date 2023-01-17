@@ -1,0 +1,4 @@
+:--foo
+::*	param
+::	Help text for `--foo`
+goto :EOF

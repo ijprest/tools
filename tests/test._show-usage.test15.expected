@@ -1,0 +1,11 @@
+[#{[97mUsage: test._show-usage.test15.txt arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9[m[#}
+
+[10Carg1  Ampersand: &
+[10Carg2  Pipe: |
+[10Carg3  Left parenthesis: (
+[10Carg4  Escape code (ASCII code 27): [#{[92mgreen[m[#}
+[10Carg5  Right parenthesis: )
+[10Carg6  Greater-than sign: >
+[10Carg7  Less-than sign: <
+[10Carg8  Space; non-breaking:
+[10Carg9  Dollar sign: $
