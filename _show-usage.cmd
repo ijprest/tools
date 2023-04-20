@@ -1,3 +1,4 @@
+:: Copyright 2022-2023 Ian Prest -- MIT Licensed
 :: _show-usage.cmd -- Helper script to display automatic "usage" info for your
 :: batch files.  See `_show-usage.md` for details.
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION

@@ -1,3 +1,5 @@
+:: Copyright 2022-2023 Ian Prest -- MIT Licensed
+:: _fuzzy-match.cmd
 @echo off
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo

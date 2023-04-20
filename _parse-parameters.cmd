@@ -1,3 +1,4 @@
+:: Copyright 2022-2023 Ian Prest -- MIT Licensed
 :: _parse-parameters.cmd -- a helper script to parse your batch-file's
 :: command-line.  See `_parse-parameters.md` for details.
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo
