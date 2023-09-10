@@ -6,6 +6,7 @@ if "%1"=="" exit /b 1
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo
 call :define_macros
 %dbgecho% Showing help for %*
+if "%1"=="-v" shift & goto :show_version
 
 set NUMTYPES=2
 set TYPENAME.1=switch
@@ -125,6 +126,19 @@ for /L %%T IN (1 1 %NUMTYPES%) DO (
 )
 
 exit /b 0 &:: done!
+
+
+:: Simple loop over the input file to print version information
+:show_version
+for /f "tokens=1,* delims=	 " %%Q IN (%~1) DO (
+  if "%%~Q"=="::version" (
+    set "VERSION=%~nx1 version %%R"
+    call :unescape VERSION
+    exit /b 0
+  )
+)
+exit /b 1 &:: not found!
+
 
 :: Define some macro functions to use elsewhere. These macros are complicated
 :: to write (everything needs to be double-escaped), but tend to be *much*

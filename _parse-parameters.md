@@ -127,7 +127,8 @@ This helper supports the standard `--` parameter to stop argument parsing. Any
 remaining arguments will be returned to the caller in the `parse.remaining`
 variable.
 
-If you want to stop parsing in response to another parameter, set `parse.stop=1` in your handler before returning.  E.g.:
+If you want to stop parsing in response to another parameter, set
+`parse.stop=1` in your handler before returning. E.g.:
 
 ```cmd
 :--command exe-and-params
@@ -136,12 +137,14 @@ set parse.stop=1
 exit /b 0
 ```
 
-For collecting parameters you intend to pass to a child program, using `parse.remaining` is preferable to collecting arguments yourself, since it preserves the formatting of the original command-line.
+For collecting parameters you intend to pass to a child program, using
+`parse.remaining` is preferable to collecting arguments yourself, since it
+preserves the formatting of the original command-line.
 
 ### Case (in-)sensitivity
 
 Note that argument parsing is *case-insensitive* due to how `cmd.exe` handles
-labels and `GOTO`s). If you need case-sensitivity, you can check the case of
+labels and `GOTO`s. If you need case-sensitivity, you can check the case of
 `%1` in your callback. E.g., to disallow lowercase `-c`, something like:
 
 ```cmd

@@ -19,6 +19,15 @@ exit /b 2
 
 This will result in pleasing and standardized help text for your script(s).
 
+You can also optionally call the script from a `--version` callback (see
+[below](#specifying-version-information)).
+
+```cmd
+:--version
+call _show-usage.cmd -v "%~f0"
+exit /b 2
+```
+
 ## Specifying help text
 
 This helper generates help text by parsing your batch file and looking for
@@ -110,6 +119,20 @@ exit /b 0
 Note that positional arguments *must* be specified *in sequence order* in your
 script. Failure to do so will result in an error message.
 
+## Specifying version information
+
+If you call the script with `-v` as [described above](#calling-the-script), it
+will look for version information encode in your batch file in this format:
+
+```cmd
+::version {your version information}
+```
+
+This line is *typically* placed near the top of the file with your other header
+information, but the script doesn't care about where it appears. The line must
+start with `::version`, but everything else is user defined and will unescaped
+and be echoed verbatim.
+
 ## Escape sequences
 
 It is notoriously tricky to write batch files that use certain reserved
@@ -130,8 +153,8 @@ $S     (space; non-breaking)
 $$   $ (dollar sign)
 ```
 
-Note that these escape sequences are supported in help-text only. They are not
-allowed in switch / flag names or positional-argument names.
+Note that these escape sequences are supported in help-text and version-text
+only. They are not allowed in switch / flag names or positional-argument names.
 
 # License (MIT)
 
