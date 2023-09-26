@@ -195,6 +195,18 @@ call :parse -abjc
 %EXPECT_OUTPUT_MATCHES%
 goto :EOF
 
+:test25	test parse.stop, empty remaining
+call :parse xxx --stop
+%EXPECT_EQ% PARSE_ERRORLEVEL 0
+%EXPECT_EQ% POSITIONAL_1 "xxx"
+%EXPECT_EQ% POSITIONAL_2 ""
+%EXPECT_EQ% SWITCH_STOP "--stop"
+%EXPECT_EQ% SWITCH_STOP_REMAINING ""
+%EXPECT_OUTPUT_EMPTY%
+goto :EOF
+
+
+
 
 REM ****************************************************************************
 REM *** Helper functions

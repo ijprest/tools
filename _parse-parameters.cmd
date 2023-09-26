@@ -18,16 +18,17 @@ if "%2"=="" exit /b 0 &:: success!
 :: Remove the first parameter from `parse.remaining`; we're careful to maintain
 :: the formatting and case of the original command-line.
 set parse.remaining=!parse.remaining:%2=/**/!
-set parse.remaining=!parse.remaining:*/**/=!
-set parse.remaining=!parse.remaining:/**/=%2!
-%$strlen% parse.r_size:=%parse.remaining%
-set parse.remaining=%*
-set parse.remaining=!parse.remaining:~-%parse.r_size%!
+set parse.remaining=!parse.remaining:* /**/=!
+if DEFINED parse.remaining set parse.remaining=!parse.remaining:/**/=%2!
+if DEFINED parse.remaining %$strlen% parse.r_size:=%parse.remaining%
+if DEFINED parse.remaining set parse.remaining=%*
+if DEFINED parse.remaining set parse.remaining=!parse.remaining:~-%parse.r_size%!
 if "%2"=="--" exit /b 0 &:: Stop parsing if we hit `--`
 set parse.consume=1
 set parse.param=%~2
 set parse.test=
 %dbgecho% Parsing argument: %~2
+%dbgecho% Remaining: %parse.remaining%
 if "%parse.param:~0,1%"=="/" set parse.param=-%parse.param:~1%
 if "%~2"=="-?" set parse.param=--help
 :: Parse switches/flags by jumping to labels with the name of the switch (and
