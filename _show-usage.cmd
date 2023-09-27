@@ -7,6 +7,7 @@ if "%dbgecho%"=="" set dbgecho=^^^> nul echo
 call :define_macros
 %dbgecho% Showing help for %*
 if "%1"=="-v" shift & goto :show_version
+if "%1"=="-c" shift & goto :show_commands
 
 set NUMTYPES=2
 set TYPENAME.1=switch
@@ -15,6 +16,8 @@ set HAS.1=0
 set HAS.2=0
 set CURRENT.1=
 set CURRENT.2=
+set HEADER.NAME=%~nx1
+if NOT "%~2"=="" set HEADER.NAME=%~2
 set HEADER.1=
 set HEADER.2=
 set HEADERWRAP.1=/[]
@@ -77,9 +80,12 @@ for /f "tokens=1,* delims=	" %%Q IN (%~1) DO (
 
 ::***** Print the header
 if !HAS.1! GTR 3 IF !HAS_DESCR! EQU 1 SET HEADER.1= [options]
-set HEADER=Usage: %~nx1%HEADER.1%%HEADER.2%
+set HEADER=Usage: %HEADER.NAME%%HEADER.1%%HEADER.2%
 echo [#{[97m%HEADER%[m[#}
 if %HAS_DESCR% NEQ 1 exit /b 0 &:: Quick exit if no more work
+
+:: Fall-though; the "show_commands" (-c) switch will start printout here.
+:printout
 
 ::***** Determine the width of the first column
 set namewidth=0
@@ -139,6 +145,25 @@ for /f "tokens=1,* delims=	 " %%Q IN (%~1) DO (
 )
 exit /b 1 &:: not found!
 
+:: Print help text for a set of commands
+:show_commands
+set NUMTYPES=1
+set TYPENAME.1=command
+set HAS.1=0
+
+for %%Q IN (%1) DO (
+  set /a HAS.1=!HAS.1!+1
+  set STR=%%~nQ
+  set NAME.1.!HAS.1!=!STR!
+  if not "%~2"=="" set NAME.1.!HAS.1!=!STR:%~2=!
+  for /f "usebackq tokens=1,* delims=	 " %%R IN ("%%~fQ") DO (
+    if "%%~R"=="::info" (
+      set "DESCR.1.!HAS.1!=%%S "
+    )
+  )
+)
+goto :printout
+exit /b 0
 
 :: Define some macro functions to use elsewhere. These macros are complicated
 :: to write (everything needs to be double-escaped), but tend to be *much*

@@ -13,11 +13,32 @@ Typical usage is to call the script from your `--help` callback, like this
 
 ```cmd
 :--help
-call _show-usage.cmd "%~f0"
+call _show-usage.cmd "%~f0" "program_name"
 exit /b 2
 ```
 
-This will result in pleasing and standardized help text for your script(s).
+This will result in pleasing and standardized help text for your script(s).  The
+second parameter is optional, and specifies the program name to use when
+printing help text.  If not specified, it will use the filename of the source
+script.
+
+If you have subcommands, and want to enumerate your subcommands (see
+[below](#specifying-help-text-for-sub-commands)), modify your `--help` handler
+to be something like the following:
+
+```cmd
+:--help
+call _show-usage.cmd "%~f0"
+echo.
+echo Possible commands:
+call _show-usage.cmd -c "%~n0-*.cmd" "%~n0-"
+exit /b 2
+```
+
+* The first parameter (`-c`) causes the script to enter command-printing mode;
+* The second parameter (`%~n0-*.cmd`) is the list of sub-command scripts; and
+* The third parameter (`%~n0-`) tells the script to strip the specified prefix
+  from the command-name.
 
 You can also optionally call the script from a `--version` callback (see
 [below](#specifying-version-information)).
@@ -125,13 +146,26 @@ If you call the script with `-v` as [described above](#calling-the-script), it
 will look for version information encode in your batch file in this format:
 
 ```cmd
-::version {your version information}
+::version➡️{your version information}
 ```
 
 This line is *typically* placed near the top of the file with your other header
 information, but the script doesn't care about where it appears. The line must
 start with `::version`, but everything else is user defined and will unescaped
 and be echoed verbatim.
+
+## Specifying help text for sub-commands
+
+If you call the script with `-c` as [described above](#calling-the-script), it
+will enumerate your sub-command scripts and look for a short description of the
+command embedded within each.  It should be encoded in this format:
+
+```cmd
+::info➡️{short description of the command}
+```
+
+This line is *typically* placed near the top of the file with your other header
+information, but the script doesn't care about where it appears.
 
 ## Escape sequences
 
