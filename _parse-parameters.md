@@ -19,6 +19,16 @@ Next, add this line to your script to parse the parameters (adjust path to
 set parse.in=%* & set parse.in=!parse.in:/?=--help! & call _parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
 ```
 
+If you expect your input to have any exclamation marks (`!`), you should instead
+use this longer form to allow them to pass through unmolested:
+
+```cmd
+setlocal DISABLEDELAYEDEXPANSION & set x=%*
+endlocal & set parse.in=%x:!=^!%
+set parse.in=!parse.in:/?=--help!
+call %~dp0_parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
+```
+
 ## Handling arguments via callbacks
 
 In your script, use labelled callbacks to handle a switch/flag or positional

@@ -3,14 +3,15 @@
 :: command-line.  See `_parse-parameters.md` for details.
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo
 call :define_macros
-%dbgecho% Parsing command-line: %*
+setlocal DISABLEDELAYEDEXPANSION & %dbgecho% Parsing command-line: %* & endlocal
 
 :: Init
 set parse.position=0
 set parse.stop=0
 if ERRORLEVEL 2 exit /b 1 &:: Exit/fail silently
 if "%2"=="" exit /b 0 &:: no parameters
-set parse.remaining=%*
+setlocal DISABLEDELAYEDEXPANSION & set x=%*
+endlocal & set parse.remaining=%x:!=^!%
 
 :: Parse command-line loop
 :parseparm
@@ -21,35 +22,46 @@ set parse.remaining=!parse.remaining:%2=/**/!
 set parse.remaining=!parse.remaining:* /**/=!
 if DEFINED parse.remaining set parse.remaining=!parse.remaining:/**/=%2!
 if DEFINED parse.remaining %$strlen% parse.r_size:=%parse.remaining%
-if DEFINED parse.remaining set parse.remaining=%*
+if DEFINED parse.remaining (setlocal DISABLEDELAYEDEXPANSION & set x=%*)
+if DEFINED parse.remaining (endlocal & set parse.remaining=%x:!=^!%)
 if DEFINED parse.remaining set parse.remaining=!parse.remaining:~-%parse.r_size%!
 if "%2"=="--" exit /b 0 &:: Stop parsing if we hit `--`
 set parse.consume=1
 set parse.param=%~2
 set parse.test=
 %dbgecho% Parsing argument: %~2
-%dbgecho% Remaining: %parse.remaining%
+setlocal DISABLEDELAYEDEXPANSION & %dbgecho% Remaining: %parse.remaining% & endlocal
 if "%parse.param:~0,1%"=="/" set parse.param=-%parse.param:~1%
 if "%~2"=="-?" set parse.param=--help
 :: Parse switches/flags by jumping to labels with the name of the switch (and
 :: exit if the switch returns an error).
+setlocal DISABLEDELAYEDEXPANSION & set x=%2 %3 %4 %5 %6 %7 %8 %9
+endlocal & set parse.29=%x:!=^!%
+setlocal DISABLEDELAYEDEXPANSION & set x=%3 %4 %5 %6 %7 %8 %9
+endlocal & set parse.39=%x:!=^!%
 if "%parse.param:~0,2%"=="--" (
-  call "%~f1" /**/ :%parse.param% %2 %3 %4 %5 %6 %7 %8 %9
+  call "%~f1" /**/ :%parse.param% !parse.29!
   if !ERRORLEVEL! EQU 1 echo [#{[91m%~n1: error: unrecognized switch `%parse.param%` 1>&2[m[#}
 ) else if "%parse.param:~0,1%"=="-" (
   set parse.test=%parse.paramflags%
   set parse.test=!parse.test:%parse.param:~1,1%=/**/!
   set parse.test=!parse.test:*/**/=/**/!
   if "!parse.test:~0,4!"=="/**/" (
-    call "%~f1" /**/ :%parse.param:~0,2% %2 %parse.param:~2% %3 %4 %5 %6 %7 %8 %9
+    setlocal DISABLEDELAYEDEXPANSION
+    call "%~f1" /**/ :%parse.param:~0,2% %2 %parse.param:~2% !parse.39!
+    endlocal
     if !ERRORLEVEL! EQU 1 echo [#{[91m%~n1: error: unrecognized flag `%parse.param:~0,2%` 1>&2[m[#}
   ) else (
+    setlocal DISABLEDELAYEDEXPANSION
     %dbgecho% Parsing flag string: %parse.param:~1%
-    call :flags "%~f1" %parse.param% %2 %3 %4 %5 %6 %7 %8 %9
+    call :flags "%~f1" %parse.param% !parse.29!
+    endlocal
   )
 ) else (
   set /a parse.position=!parse.position! + 1
-  call "%~f1" /**/ :_pos!parse.position! %2 %3 %4 %5 %6 %7 %8 %9
+  REM TODO: setlocal DISABLEDELAYEDEXPANSION
+  call "%~f1" /**/ :_pos!parse.position! !parse.29!
+  REM endlocal
   if !ERRORLEVEL! EQU 1 echo [#{[91m%~n1: error: unrecognized positional argument `%~2` 1>&2[m[#}
 )
 if ERRORLEVEL 1 exit /b 1 &:: Exit/fail silently
