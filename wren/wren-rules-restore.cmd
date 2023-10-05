@@ -4,7 +4,12 @@
 @echo off
 set wren.restore.name=
 set wren.restore.file=
-set parse.in=%* & set parse.in=!parse.in:/?=--help! & call %~dp0..\_parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
+
+setlocal DISABLEDELAYEDEXPANSION & set x=%*
+endlocal & set parse.in=%x:!=^!%
+if defined parse.in set parse.in=!parse.in:/?=--help!
+call %~dp0..\_parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
+
 if not defined wren.restore.name if not defined wren.restore.file goto :--help
 if defined wren.restore.file call :restorefrom "%wren.restore.file%" || exit /b 1
 if defined wren.restore.name (

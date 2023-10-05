@@ -8,7 +8,7 @@ set wren.clear.BOTH=1
 
 setlocal DISABLEDELAYEDEXPANSION & set x=%*
 endlocal & set parse.in=%x:!=^!%
-set parse.in=!parse.in:/?=--help!
+if defined parse.in set parse.in=!parse.in:/?=--help!
 call %~dp0..\_parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
 
 if NOT "%wren.clear.BOTH%%wren.clear.FILELIST%"=="" if exist "%wren.FILELIST%" del "%wren.FILELIST%"

@@ -8,7 +8,7 @@ set wren.files.DONE=
 
 setlocal DISABLEDELAYEDEXPANSION & set x=%*
 endlocal & set parse.in=%x:!=^!%
-set parse.in=!parse.in:/?=--help!
+if defined parse.in set parse.in=!parse.in:/?=--help!
 call %~dp0..\_parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
 
 if defined wren.files.DONE call :sortanddedup

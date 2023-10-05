@@ -25,7 +25,7 @@ use this longer form to allow them to pass through unmolested:
 ```cmd
 setlocal DISABLEDELAYEDEXPANSION & set x=%*
 endlocal & set parse.in=%x:!=^!%
-set parse.in=!parse.in:/?=--help!
+if defined parse.in set parse.in=!parse.in:/?=--help!
 call %~dp0_parse-parameters.cmd "%~f0" !parse.in! || exit /b 1
 ```
 
