@@ -6,10 +6,27 @@ your batch files.
 It is intended for use alongside the `_parse_parameters.cmd` script. When used
 together, it largely automates generating your help/usage text.
 
+Throughout this documentation the `➡️` glyph will be use to represent a `TAB`
+character. Depending on your editor, you may have trouble actually inserting the
+`TAB` character. Holding `Alt` and typing `009` on the keypad is a workaround
+for some editors.
+
 ## Calling the script
 
-Typical usage is to call the script from your `--help` callback, like this
-(modify the path to `_show-usage.cmd` as necessary):
+`_show-usage.cmd` has several modes in which it can operate:
+* [Normal usage](#normal-usage)
+* [Listing available commands](#listing-available-subcommands) (`-c`)
+* [Displaying version information](#displaying-version-information) (`-v`)
+* [Wrapping text](#wrapping-text--w) (`-w`)
+* [Wrapping table text](#wrapping-table-text--t) (`-t`)
+* [Pre-initializing for performance](#pre-initializing-for-performance) (`-s`)
+
+These modes are described below.
+
+### Normal usage
+
+Typical usage is to call `_show-usage.cmd` from your `--help` callback, like
+this (modify the path as necessary):
 
 ```cmd
 :--help
@@ -22,9 +39,13 @@ second parameter is optional, and specifies the program name to use when
 printing help text.  If not specified, it will use the filename of the source
 script.
 
-If you have subcommands, and want to enumerate your subcommands (see
-[below](#specifying-help-text-for-sub-commands)), modify your `--help` handler
-to be something like the following:
+See the section below on [specifying help text](#specifying-help-text) for
+information on how to annotate your script with help text.
+
+### Listing available subcommands
+
+If you have subcommands, and want to enumerate your subcommands, modify your
+`--help` handler to be something like the following:
 
 ```cmd
 :--help
@@ -35,19 +56,100 @@ call _show-usage.cmd -c "%~n0-*.cmd" "%~n0-"
 exit /b 2
 ```
 
-* The first parameter (`-c`) causes the script to enter command-printing mode;
+* The first parameter (`-c`) causes `_show-usage.cmd` to enter command-printing
+  mode;
 * The second parameter (`%~n0-*.cmd`) is the list of sub-command scripts; and
-* The third parameter (`%~n0-`) tells the script to strip the specified prefix
-  from the command-name.
+* The third parameter (`%~n0-`) tells `_show-usage.cmd` to strip the specified
+  prefix from the command-name.
 
-You can also optionally call the script from a `--version` callback (see
-[below](#specifying-version-information)).
+See also the section below on [specifying help text for
+sub-commands](#specifying-help-text-for-sub-commands) for information on how to
+annotate your sub-command scripts.
+
+### Displaying version information
+
+You can also optionally call `_show-usage.cmd` from a `--version` callback with
+the `-v` switch to cause it to display your script's version information.
 
 ```cmd
 :--version
 call _show-usage.cmd -v "%~f0"
 exit /b 2
 ```
+
+See also the section below on [specifying version
+information](#specifying-version-information) for information on how to annotate
+your script with version information.
+
+### Wrapping text
+
+`_show-usage.cmd` includes utility functions to print wrapped text, and these
+are exposed to your script with the `-w` switch.  You can call it to print one
+or more wrapped paragraphs like this:
+
+```cmd
+call _show-usage.cmd -w "%~f0" p1
+::p1➡️The above command will cause `_show-usage.cmd` to parse your batch file
+::p1➡️(`%~f0`) and print out the paragraph labelled `p1`.  Note that this only
+::p1➡️prints a single paragraph.
+echo.
+call _show-usage.cmd -w "%~f0" p2
+::p2➡️If you want a second paragraph, you need to invoke `_show-usage.cmd` a
+::p2➡️second time with a different paragraph label.
+```
+
+You can split your paragraph across multiple lines in your source file for
+readability; they will be wrapped to the screen size as necessary.
+
+The paragraph text is typically placed under the call to `_show-usage.cmd`, but this is an arbitrary convention; it can be located anywhere in your batch file.
+
+### Wrapping table text
+
+`_show-usage.cmd` has facilities to display a table of text, which is also
+exposed for reuse with the `-t` switch.  You can use it something like this:
+
+```cmd
+call _show-usage.cmd -w "%~f0" t1
+::t1➡️item1➡️description1; this can be long, and it will wrap as necessary
+::t1➡️item2➡️description2; and if you need to split your lines for readability
+::t1➡️➡️➡️➡️you can do so.  The number of TABs is arbitrary, so feel free
+::t1➡️➡️➡️➡️to line up the text in your editor.
+```
+
+Note that this is best used for "definition list" tables; the labels ("item1"
+and "item2" in the above example) are not wrapped, and are expected to be
+relatively short.
+
+As with wrapped text paragraphs, the table definition is typically placed just
+under the call to `_show-usage.cmd`, but it can actually appear anywhere in your
+batch file.
+
+### Pre-initializing for performance
+
+If you are calling `_show-usage.cmd` to print a lot of wrapped paragraphs or
+tables, it can be helpful to pre-initialize some variables it uses for enhanced
+performance.  You can do this by passing the `-s` switch, something like this:
+
+```cmd
+REM *** Pre-initalize
+call _show-usage.cmd -s
+
+REM *** Display normal help text
+call _show-usage.cmd "%~f0" "wren rules"
+
+REM *** Display some additional help in wrapped paragraphs
+echo.
+call _show-usage.cmd -w "%~f0" p1
+echo.
+call _show-usage.cmd -w "%~f0" p2
+echo.
+call _show-usage.cmd -w "%~f0" p3
+echo.
+call _show-usage.cmd -w "%~f0" p4
+```
+
+The pre-initialize step causes some of the more expensive work (specifically the
+code to detect your console size) to only be performed once.
 
 ## Specifying help text
 
@@ -61,10 +163,7 @@ purpose can be deduced from the name. However, you can also to provide
 additional *help text* for each switch / argument.
 
 Help text is specified on the lines following the callback label. It is
-specified by a single colon, followed by a `Tab` character (which we'll
-represent by `➡️` in this documentation). Depending on your editor, you may
-have trouble actually inserting the `Tab` character. Holding `Alt` and typing
-`009` on the keypad is a workaround that sometimes works.
+specified by a single colon, followed by a `TAB` character.
 
 ### Switches & Flags
 

@@ -1,14 +1,19 @@
 :: Copyright 2022-2023 Ian Prest -- MIT Licensed
 :: _show-usage.cmd -- Helper script to display automatic "usage" info for your
 :: batch files.  See `_show-usage.md` for details.
+if "%1"=="-s" shift & goto :screen_size
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 if "%1"=="" exit /b 1
 if "%dbgecho%"=="" set dbgecho=^^^> nul echo
 call :define_macros
 %dbgecho% Showing help for %*
+:: Special modes (`-s` handled above the `setlocal`)
 if "%1"=="-v" shift & goto :show_version
 if "%1"=="-c" shift & goto :show_commands
+if "%1"=="-w" shift & goto :echo_wrap
+if "%1"=="-t" shift & goto :echo_table
 
+:: Normal usage; collect params and output help text
 set NUMTYPES=2
 set TYPENAME.1=switch
 set TYPENAME.2=positional
@@ -100,17 +105,8 @@ for /L %%T IN (1 1 %NUMTYPES%) DO (
 if %namewidth% LSS 12 set /a namewidth=16-3-2 &::minumim size is 2 tabstops
 set /a namewidth+=3 &::add indent
 
-::***** Determine the console size
-for /f "tokens=1,2 delims=:" %%Q IN ('mode con:') DO (
-  if not "%%R"=="" (
-    for /f "tokens=* delims= " %%S IN ("%%Q") DO (
-      for /f "tokens=* delims= " %%T IN ("%%R") DO set mode.%%S=%%T
-    )
-  )
-)
-
 ::***** Determine the width of the 2nd column
-if %mode.Columns% GTR 120 set /a mode.Columns=120 &::& too long is unreadable
+call :screen_size
 set /a textwidth=mode.Columns - %namewidth% - 2
 %dbgecho% namewidth=%namewidth%
 %dbgecho% mode.Columns=%mode.Columns%
@@ -118,7 +114,7 @@ set /a textwidth=mode.Columns - %namewidth% - 2
 
 ::***** Print the help text for switches & positional arguments
 for /L %%T IN (1 1 %NUMTYPES%) DO (
-  set DID_OUTPUT=0
+  set DID_OUTPUT=!DESCR.NOCRLF.%%T!
   for /L %%Q IN (1 1 !HAS.%%T!) DO (
     if NOT "!DESCR.%%T.%%Q!"=="" (
       if !DID_OUTPUT! EQU 0 echo.
@@ -149,6 +145,7 @@ exit /b 1 &:: not found!
 :show_commands
 set NUMTYPES=1
 set TYPENAME.1=command
+set DESCR.NOCRLF.1=1
 set HAS.1=0
 
 for %%Q IN (%1) DO (
@@ -162,6 +159,40 @@ for %%Q IN (%1) DO (
     )
   )
 )
+goto :printout
+exit /b 0
+
+:: Print a paragraph of help text, wrapped.
+:echo_wrap
+set TEXT=
+for /f "usebackq tokens=1,* delims=	" %%Q IN ("%~f1") DO (
+  if "%%Q"=="::%~2" (
+    if not defined TEXT (set TEXT=%%R) else set TEXT=!TEXT! %%R
+  )
+)
+call :screen_size
+call :wrap %mode.Columns% 0 TEXT
+exit /b 0
+
+:: Print a table, wrapped
+:echo_table
+set NUMTYPES=1
+set TYPENAME.1=table
+set HAS.1=0
+
+for /f "usebackq tokens=1,2,* delims=	" %%Q IN ("%~f1") DO (
+  if "%%Q"=="::%~2" (
+    if "%%S"=="" (
+      set "DESCR=!DESCR! %%R"
+    ) else (
+      set "DESCR.1.!HAS.1!=!DESCR!"
+      set /a HAS.1=!HAS.1!+1
+      set NAME.1.!HAS.1!=%%~R
+      set "DESCR=%%S"
+    )
+  )
+)
+set "DESCR.1.!HAS.1!=!DESCR!"
 goto :printout
 exit /b 0
 
@@ -239,4 +270,17 @@ set "LINE=!LINE:$L=^<!"
 set "LINE=!LINE:$S= !"
 set "LINE=!LINE:$$=$!"
 echo %LINE%
+goto :EOF
+
+::***** Determine the console size
+:screen_size
+if defined mode.Columns goto :EOF
+for /f "tokens=1,2 delims=:" %%Q IN ('mode con:') DO (
+  if not "%%R"=="" (
+    for /f "tokens=* delims= " %%S IN ("%%Q") DO (
+      for /f "tokens=* delims= " %%T IN ("%%R") DO set mode.%%S=%%T
+    )
+  )
+)
+if %mode.Columns% GTR 120 set /a mode.Columns=120 &::& too long is unreadable
 goto :EOF
