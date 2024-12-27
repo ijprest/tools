@@ -27,6 +27,6 @@ exit /b 0
 call "%~dp0_show-usage.cmd" "%~f0"
 exit /b 2
 
-:_pos1 fuzzy-pattern
+:_pos0 fuzzy-pattern
 set PATTERN=%~1
 exit /b 0
