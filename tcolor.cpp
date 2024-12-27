@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
             fprintf( stderr, 
                 "Sets the console foreground and background colors.\n"
                 "\n"
-                "COLOR [XX] [/table] [/ansi]\n"
+                "TCOLOR [XX] [/table] [/ansi]\n"
                 "\n"
                 "    XX          Specifies color attribute of console output\n"
                 "    /table      Prints the current color table\n"
