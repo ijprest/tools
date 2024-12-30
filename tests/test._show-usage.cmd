@@ -2,7 +2,7 @@
 @setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 @echo off
 mode con cols=80 &:: Set to 80 columns for word-wrapping tests
-call _test_harness.cmd "%~f0" %1
+call _test_harness.cmd "%~f0" %*
 exit /b %ERRORLEVEL%
 
 REM ****************************************************************************

@@ -1,7 +1,7 @@
 @if "%~1"=="/**/" shift /1 & shift /1 & goto %~2 2>nul
 @setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 @echo off
-call _test_harness.cmd "%~f0" %1
+call _test_harness.cmd "%~f0" %*
 exit /b %ERRORLEVEL%
 
 REM ****************************************************************************
@@ -205,7 +205,12 @@ call :parse xxx --stop
 %EXPECT_OUTPUT_EMPTY%
 goto :EOF
 
-
+:test26	test passing exclamation marks
+call :parse x!x
+setlocal DISABLE
+%EXPECT_EQ% PARSE_ERRORLEVEL 0
+%EXPECT_EQ% POSITIONAL_1 "x^^!x"
+goto :EOF
 
 
 REM ****************************************************************************
@@ -213,8 +218,9 @@ REM *** Helper functions
 REM ****************************************************************************
 :parse
 set parse.paramflags=zjx
-set parse.in=%*
-set parse.in=!parse.in:/?=--help!
+setlocal DISABLEDELAYEDEXPANSION & set x=%*
+endlocal & set parse.in=%x:!=^!%
+if defined parse.in set parse.in=!parse.in:/?=--help!
 >%~dpn0.test%test.number%.actual 2>&1 call %~dp0..\_parse-parameters.cmd "%~f0" !parse.in!
 set PARSE_ERRORLEVEL=%ERRORLEVEL%
 exit /b 0
@@ -225,9 +231,11 @@ REM *** Parsing callbacks
 REM ****************************************************************************
 :_pos1
 set POSITIONAL_1=%1
+set POSITIONAL_1
 exit /b 0
 :_pos2
 set POSITIONAL_2=%1
+set POSITIONAL_2
 exit /b 0
 :_pos3
 set POSITIONAL_3=%1
